@@ -1,0 +1,15 @@
+Amz/src/Amz.Core/obj/
+Amz/src/Amz.Infrastructure/bin/
+Amz/src/Amz.Infrastructure/obj/
+Amz/src/Amz.SharedKernel/obj/
+Amz/src/Amz.SharedKernel/bin/
+Amz/src/Amz.Web/bin/
+Amz/src/Amz.Web/obj/
+Amz/tests/Amz.IntegrationTests/bin/
+Amz/tests/Amz.UnitTests/bin/
+Amz/tests/Amz.UnitTests/obj/
+Amz/tests/Amz.IntegrationTests/obj/
+Amz/tests/Amz.FunctionalTests/obj/
+Amz/tests/Amz.FunctionalTests/bin/
+Amz/src/Amz.Core/bin/
+Amz/.vs/
