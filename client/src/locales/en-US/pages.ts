@@ -65,4 +65,9 @@ export default {
   'pages.searchTable.tenThousand': '0000',
   'pages.searchTable.batchDeletion': 'bacth deletion',
   'pages.searchTable.batchApproval': 'batch approval',
+  'pages.todoItem.nameStatus.notDone': 'Not Done',
+  'pages.todoItem.nameStatus.Done': 'Done',
+  'pages.todoItem.titleAction': 'Action',
+  'pages.todoItem.edit': 'Edit',
+  'pages.todoItem.delete': 'Delete',
 };

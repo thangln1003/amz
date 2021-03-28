@@ -24,7 +24,7 @@ namespace Amz.Core.Handlers.ToDoItems.Queries
         {
             return new()
             {
-                Lists = (await _repository.ListAsync<ToDoItem>()).Select(s => new ToDoItemDto
+                Data = (await _repository.ListAsync<ToDoItem>()).Select(s => new ToDoItemDto
                 {
                     Id = s.Id,
                     Description = s.Description,

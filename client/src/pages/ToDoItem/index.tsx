@@ -11,77 +11,77 @@ import ProDescriptions from '@ant-design/pro-descriptions';
 import type { FormValueType } from './components/UpdateForm';
 import UpdateForm from './components/UpdateForm';
 import type { ToDoItem } from './data.d';
-import { queryRule, updateRule, addRule, removeRule } from './service';
+import { queryToDoItem, updateToDoItem, addToDoItem, removeToDoItem } from './service';
 
 /**
- * 添加节点
+ * Add node
  *
  * @param fields
  */
 const handleAdd = async (fields: ToDoItem) => {
-  const hide = message.loading('正在添加');
+  const hide = message.loading('Adding');
   try {
-    await addRule({ ...fields });
+    await addToDoItem({ ...fields });
     hide();
-    message.success('添加成功');
+    message.success('Added successfully');
     return true;
   } catch (error) {
     hide();
-    message.error('添加失败请重试！');
+    message.error('Failed to add, please try again!');
     return false;
   }
 };
 
 /**
- * 更新节点
+ * Update node
  *
  * @param fields
  */
 const handleUpdate = async (fields: FormValueType) => {
-  const hide = message.loading('正在配置');
+  const hide = message.loading('Updating');
   try {
-    await updateRule({
-      name: fields.name,
-      desc: fields.desc,
-      key: fields.key,
+    await updateToDoItem({
+      title: fields.title,
+      description: fields.description,
+      id: fields.id,
     });
     hide();
 
-    message.success('配置成功');
+    message.success('Updated successfully');
     return true;
   } catch (error) {
     hide();
-    message.error('配置失败请重试！');
+    message.error('Failed to update, please try again!');
     return false;
   }
 };
 
 /**
- * 删除节点
+ * Delete node
  *
  * @param selectedRows
  */
 const handleRemove = async (selectedRows: ToDoItem[]) => {
-  const hide = message.loading('正在删除');
+  const hide = message.loading('Deleting');
   if (!selectedRows) return true;
   try {
-    await removeRule({
-      key: selectedRows.map((row) => row.key),
+    await removeToDoItem({
+      key: selectedRows.map((row) => row.id),
     });
     hide();
-    message.success('删除成功，即将刷新');
+    message.success('Deleted successfully，going to refresh');
     return true;
   } catch (error) {
     hide();
-    message.error('删除失败，请重试');
+    message.error('Failed to delete，please try again');
     return false;
   }
 };
 
 const ToDoItemList: React.FC = () => {
-  /** 新建窗口的弹窗 */
+  /** Create Popup Window */
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
-  /** 分布更新窗口的弹窗 */
+  /** Update Popup Window */
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
 
   const [showDetail, setShowDetail] = useState<boolean>(false);
@@ -90,7 +90,7 @@ const ToDoItemList: React.FC = () => {
   const [currentRow, setCurrentRow] = useState<ToDoItem>();
   const [selectedRowsState, setSelectedRows] = useState<ToDoItem[]>([]);
 
-  /** 国际化配置 */
+  /** International configuration */
   const intl = useIntl();
 
   const columns: ProColumns<ToDoItem>[] = [
@@ -98,10 +98,10 @@ const ToDoItemList: React.FC = () => {
       title: (
         <FormattedMessage
           id="pages.searchTable.updateForm.ruleName.nameLabel"
-          defaultMessage="规则名称"
+          defaultMessage="Rule Name"
         />
       ),
-      dataIndex: 'name',
+      dataIndex: 'title',
       tip: '规则名称是唯一的 key',
       render: (dom, entity) => {
         return (
@@ -117,80 +117,31 @@ const ToDoItemList: React.FC = () => {
       },
     },
     {
-      title: <FormattedMessage id="pages.searchTable.titleDesc" defaultMessage="描述" />,
-      dataIndex: 'desc',
+      title: <FormattedMessage id="pages.searchTable.titleDesc" defaultMessage="Description" />,
+      dataIndex: 'description',
       valueType: 'textarea',
     },
     {
-      title: <FormattedMessage id="pages.searchTable.titleCallNo" defaultMessage="服务调用次数" />,
-      dataIndex: 'callNo',
-      sorter: true,
-      hideInForm: true,
-      renderText: (val: string) =>
-        `${val}${intl.formatMessage({
-          id: 'pages.searchTable.tenThousand',
-          defaultMessage: ' 万 ',
-        })}`,
-    },
-    {
-      title: <FormattedMessage id="pages.searchTable.titleStatus" defaultMessage="状态" />,
-      dataIndex: 'status',
+      title: <FormattedMessage id="pages.searchTable.titleStatus" defaultMessage="Status" />,
+      dataIndex: 'isDone',
       hideInForm: true,
       valueEnum: {
-        0: {
+        'false': {
           text: (
-            <FormattedMessage id="pages.searchTable.nameStatus.default" defaultMessage="关闭" />
+            <FormattedMessage id="pages.todoItem.nameStatus.notDone" defaultMessage="Not Done" />
           ),
           status: 'Default',
         },
-        1: {
+        'true': {
           text: (
-            <FormattedMessage id="pages.searchTable.nameStatus.running" defaultMessage="运行中" />
-          ),
-          status: 'Processing',
-        },
-        2: {
-          text: (
-            <FormattedMessage id="pages.searchTable.nameStatus.online" defaultMessage="已上线" />
+            <FormattedMessage id="pages.todoItem.nameStatus.done" defaultMessage="Done" />
           ),
           status: 'Success',
         },
-        3: {
-          text: (
-            <FormattedMessage id="pages.searchTable.nameStatus.abnormal" defaultMessage="异常" />
-          ),
-          status: 'Error',
-        },
       },
     },
     {
-      title: (
-        <FormattedMessage id="pages.searchTable.titleUpdatedAt" defaultMessage="上次调度时间" />
-      ),
-      sorter: true,
-      dataIndex: 'updatedAt',
-      valueType: 'dateTime',
-      renderFormItem: (item, { defaultRender, ...rest }, form) => {
-        const status = form.getFieldValue('status');
-        if (`${status}` === '0') {
-          return false;
-        }
-        if (`${status}` === '3') {
-          return (
-            <Input
-              {...rest}
-              placeholder={intl.formatMessage({
-                id: 'pages.searchTable.exception',
-                defaultMessage: '请输入异常原因！',
-              })}
-            />
-          );
-        }
-        return defaultRender(item);
-      },
-    },
-    {
-      title: <FormattedMessage id="pages.searchTable.titleOption" defaultMessage="操作" />,
+      title: <FormattedMessage id="pages.todoItem.titleAction" defaultMessage="Action" />,
       dataIndex: 'option',
       valueType: 'option',
       render: (_, record) => [
@@ -201,10 +152,10 @@ const ToDoItemList: React.FC = () => {
             setCurrentRow(record);
           }}
         >
-          <FormattedMessage id="pages.searchTable.config" defaultMessage="配置" />
+          <FormattedMessage id="pages.todoItem.edit" defaultMessage="Edit" />
         </a>,
         <a key="subscribeAlert" href="https://procomponents.ant.design/">
-          <FormattedMessage id="pages.searchTable.subscribeAlert" defaultMessage="订阅警报" />
+          <FormattedMessage id="pages.todoItem.delete" defaultMessage="Delete" />
         </a>,
       ],
     },
@@ -215,10 +166,10 @@ const ToDoItemList: React.FC = () => {
       <ProTable<ToDoItem>
         headerTitle={intl.formatMessage({
           id: 'pages.searchTable.title',
-          defaultMessage: '查询表格',
+          defaultMessage: 'Enquiry Form',
         })}
         actionRef={actionRef}
-        rowKey="key"
+        rowKey="id"
         search={{
           labelWidth: 120,
         }}
@@ -230,10 +181,10 @@ const ToDoItemList: React.FC = () => {
               handleModalVisible(true);
             }}
           >
-            <PlusOutlined /> <FormattedMessage id="pages.searchTable.new" defaultMessage="新建" />
+            <PlusOutlined /> <FormattedMessage id="pages.searchTable.new" defaultMessage="New" />
           </Button>,
         ]}
-        request={(params, sorter, filter) => queryRule({ ...params, sorter, filter })}
+        request={(params, sorter, filter) => queryToDoItem({ ...params, sorter, filter })}
         columns={columns}
         rowSelection={{
           onChange: (_, selectedRows) => {
@@ -245,9 +196,9 @@ const ToDoItemList: React.FC = () => {
         <FooterToolbar
           extra={
             <div>
-              <FormattedMessage id="pages.searchTable.chosen" defaultMessage="已选择" />{' '}
+              <FormattedMessage id="pages.searchTable.chosen" defaultMessage="Chosen" />{' '}
               <a style={{ fontWeight: 600 }}>{selectedRowsState.length}</a>{' '}
-              <FormattedMessage id="pages.searchTable.item" defaultMessage="项" />
+              <FormattedMessage id="pages.searchTable.item" defaultMessage="Item" />
               &nbsp;&nbsp;
               <span>
                 <FormattedMessage
@@ -267,17 +218,17 @@ const ToDoItemList: React.FC = () => {
               actionRef.current?.reloadAndRest?.();
             }}
           >
-            <FormattedMessage id="pages.searchTable.batchDeletion" defaultMessage="批量删除" />
+            <FormattedMessage id="pages.searchTable.batchDeletion" defaultMessage="Batch Deletion" />
           </Button>
           <Button type="primary">
-            <FormattedMessage id="pages.searchTable.batchApproval" defaultMessage="批量审批" />
+            <FormattedMessage id="pages.searchTable.batchApproval" defaultMessage="Batch Approval" />
           </Button>
         </FooterToolbar>
       )}
       <ModalForm
         title={intl.formatMessage({
           id: 'pages.searchTable.createForm.newRule',
-          defaultMessage: '新建规则',
+          defaultMessage: 'New Rule',
         })}
         width="400px"
         visible={createModalVisible}
@@ -299,7 +250,7 @@ const ToDoItemList: React.FC = () => {
               message: (
                 <FormattedMessage
                   id="pages.searchTable.ruleName"
-                  defaultMessage="规则名称为必填项"
+                  defaultMessage="Rule Name is required"
                 />
               ),
             },
@@ -337,15 +288,15 @@ const ToDoItemList: React.FC = () => {
         }}
         closable={false}
       >
-        {currentRow?.name && (
+        {currentRow?.title && (
           <ProDescriptions<ToDoItem>
             column={2}
-            title={currentRow?.name}
+            title={currentRow?.title}
             request={async () => ({
               data: currentRow || {},
             })}
             params={{
-              id: currentRow?.name,
+              id: currentRow?.title,
             }}
             columns={columns as ProDescriptionsItemProps<ToDoItem>[]}
           />

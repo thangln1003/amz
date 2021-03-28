@@ -2,7 +2,7 @@ import request from '@/utils/request';
 import type { TableListParams, ToDoItem } from './data.d';
 
 export async function queryToDoItem(params?: TableListParams) {
-  return request('/api/rule', {
+  return request('/api/ToDoItems', {
     params,
   });
 }

@@ -1,16 +1,8 @@
 export type ToDoItem = {
-    key: number;
-    disabled?: boolean;
-    href: string;
-    avatar: string;
-    name: string;
-    owner: string;
-    desc: string;
-    callNo: number;
-    status: number;
-    updatedAt: Date;
-    createdAt: Date;
-    progress: number;
+    id: number;
+    title: string;
+    description: string;
+    isDone: boolean;
   };
   
   export type TableListPagination = {
@@ -25,10 +17,10 @@ export type ToDoItem = {
   };
   
   export type TableListParams = {
-    status?: string;
-    name?: string;
-    desc?: string;
-    key?: number;
+    id?: number;
+    title?: string;
+    description?: string;
+    isDone?: boolean;
     pageSize?: number;
     currentPage?: number;
     filter?: Record<string, any[]>;

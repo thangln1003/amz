@@ -14,7 +14,7 @@ export default defineConfig({
   },
   locale: {
     // default zh-CN
-    default: 'zh-CN',
+    default: 'en-US',
     antd: true,
     // default true, when it is true, will use `navigator.language` overwrite default
     baseNavigator: true,
@@ -97,6 +97,23 @@ export default defineConfig({
                   icon: 'smile',
                   path: '/dashboard/workplace',
                   component: './dashboard/workplace',
+                },
+              ],
+            },
+            {
+              path: '/todoItem',
+              name: 'todoItem',
+              icon: 'dashboard',
+              routes: [
+                {
+                  path: '/',
+                  redirect: '/todoItem/list',
+                },
+                {
+                  name: 'todoItemList',
+                  icon: 'smile',
+                  path: '/todoItem/list',
+                  component: './ToDoItem',
                 },
               ],
             },

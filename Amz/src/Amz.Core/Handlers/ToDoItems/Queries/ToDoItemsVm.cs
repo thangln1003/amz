@@ -4,6 +4,6 @@ namespace Amz.Core.Handlers.ToDoItems.Queries
 {
     public class ToDoItemsVm
     {
-        public IList<ToDoItemDto> Lists { get; set; }
+        public IList<ToDoItemDto> Data { get; set; }
     }
 }
